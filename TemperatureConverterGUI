@@ -1,0 +1,82 @@
+import javax.swing.*;
+import java.awt.event.*;
+
+public class TemperatureConverterGUI {
+
+    public static void main(String[] args) {
+        // Frame
+        JFrame frame = new JFrame("Temperature Converter");
+        frame.setSize(400, 300);
+        frame.setLayout(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Components
+        JLabel inputLabel = new JLabel("Enter Temperature:");
+        inputLabel.setBounds(30, 30, 150, 25);
+        JTextField inputField = new JTextField();
+        inputField.setBounds(180, 30, 150, 25);
+
+        JLabel fromLabel = new JLabel("From:");
+        fromLabel.setBounds(30, 70, 100, 25);
+        String[] scales = {"Celsius", "Fahrenheit", "Kelvin"};
+        JComboBox<String> fromBox = new JComboBox<>(scales);
+        fromBox.setBounds(180, 70, 150, 25);
+
+        JLabel toLabel = new JLabel("To:");
+        toLabel.setBounds(30, 110, 100, 25);
+        JComboBox<String> toBox = new JComboBox<>(scales);
+        toBox.setBounds(180, 110, 150, 25);
+
+        JButton convertButton = new JButton("Convert");
+        convertButton.setBounds(130, 160, 100, 30);
+
+        JLabel resultLabel = new JLabel("Result: ");
+        resultLabel.setBounds(30, 210, 300, 25);
+
+        // Action Listener
+        convertButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    double inputTemp = Double.parseDouble(inputField.getText());
+                    String from = fromBox.getSelectedItem().toString();
+                    String to = toBox.getSelectedItem().toString();
+
+                    double result = convertTemperature(inputTemp, from, to);
+                    resultLabel.setText("Result: " + result + " " + to);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "Invalid number input!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        // Add to frame
+        frame.add(inputLabel);
+        frame.add(inputField);
+        frame.add(fromLabel);
+        frame.add(fromBox);
+        frame.add(toLabel);
+        frame.add(toBox);
+        frame.add(convertButton);
+        frame.add(resultLabel);
+
+        frame.setVisible(true);
+    }
+
+    public static double convertTemperature(double temp, String from, String to) {
+        // Convert from source to Celsius first
+        double tempInCelsius = switch (from) {
+            case "Celsius" -> temp;
+            case "Fahrenheit" -> (temp - 32) * 5 / 9;
+            case "Kelvin" -> temp - 273.15;
+            default -> temp;
+        };
+
+        // Convert from Celsius to target
+        return switch (to) {
+            case "Celsius" -> tempInCelsius;
+            case "Fahrenheit" -> (tempInCelsius * 9 / 5) + 32;
+            case "Kelvin" -> tempInCelsius + 273.15;
+            default -> tempInCelsius;
+        };
+    }
+}
